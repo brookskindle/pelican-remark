@@ -7,7 +7,7 @@ def test_internal_links_are_replaced():
 
 
 def test_internal_images_are_replaced():
-    content = "![]({static}/images/image.png"
+    content = "![]({static}/images/image.png)"
     replaced = remark.replace_internal_links(content)
     assert content != replaced
 
@@ -40,6 +40,7 @@ def test_links_within_code_blocks_are_preserved():
     content = """\
         ```
         [a file]({static}/file.pdf)
+        ![an image]({static}/images/image.png)
         ```
     """
     replaced = remark.replace_internal_links(content)

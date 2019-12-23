@@ -23,7 +23,7 @@ def get_markdown_link_regex():
     would all be matched
     """
     regex = (
-        r"\!?"  # Optionally begin with an exclamation mark
+        r"(?P<is_image>\!?)"  # Optionally begin with an exclamation mark
 
         # Capture the link name, or image alt text within brackets
         # [], [click here], ![alt text]
@@ -39,11 +39,14 @@ def get_markdown_link_regex():
 
 def replace_internal_links(markdown):
     """Return markdown, but internal links are replaced"""
-    regex = get_markdown_link_regex()
+    link_regex = get_markdown_link_regex()
 
-    # TODO: Use the link regex instead
-    markdown = markdown.replace("{static}", "")
+    def replace(m):
+        # Remove "what" {static}
+        new_link = f"{m.group('is_image')}[{m.group('link')}]({m.group('value')})"
+        return new_link
 
+    markdown = re.sub(link_regex, replace, markdown)
     return markdown
 
 
