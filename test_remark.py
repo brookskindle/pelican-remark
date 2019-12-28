@@ -1,4 +1,5 @@
 from . import remark
+import pytest
 
 def test_internal_links_are_replaced():
     content = "[a file]({static}/file.pdf)"
@@ -20,12 +21,14 @@ def test_links_not_in_link_form_are_preserved():
 
 # TODO: html should already be handled by upstream Pelican rendering - would
 # need an integration test for that
+@pytest.mark.skip()
 def test_html_images_are_replaced():
     content = "<img alt='picture' src='{static}/images/git-status.png'></img>"
     replaced = remark.replace_internal_links(content)
     assert content != replaced
 
 
+@pytest.mark.skip()
 def test_html_links_are_replaced():
     content = "<a src='{static}/images/git-status.png'>Click here</a>"
     replaced = remark.replace_internal_links(content)
