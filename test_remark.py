@@ -33,20 +33,3 @@ def test_html_links_are_replaced():
     content = "<a src='{static}/images/git-status.png'>Click here</a>"
     replaced = remark.replace_internal_links(content)
     assert content != replaced
-
-
-def test_links_within_inline_code_blocks_are_preserved():
-    content = "`[a file]({static}/file.pdf)`"
-    replaced = remark.replace_internal_links(content)
-    assert content == replaced
-
-
-def test_links_within_multiline_code_blocks_are_preserved():
-    content = """\
-        ```
-        [a file]({static}/file.pdf)
-        ![an image]({static}/images/image.png)
-        ```
-    """
-    replaced = remark.replace_internal_links(content)
-    assert content == replaced
