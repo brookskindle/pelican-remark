@@ -6,9 +6,9 @@ from pelican import signals
 from pelican.readers import MarkdownReader
 from pelican.utils import pelican_open
 from pelican.contents import Content
+import pelican.settings as settings
 
-# TODO: fetch from pelican
-INTRASITE_LINK_REGEX = '[{|](?P<what>.*?)[|}]'
+INTRASITE_LINK_REGEX = settings.read_settings()["INTRASITE_LINK_REGEX"]
 
 
 def get_markdown_link_regex():
@@ -42,9 +42,8 @@ def replace_internal_links(markdown):
     link_regex = get_markdown_link_regex()
 
     def replace(m):
-        # Remove "what" {static}
-        new_link = f"{m.group('is_image')}[{m.group('link')}]({m.group('value')})"
-        return new_link
+        # Remove "what" group. IE, "{static}"
+        return f"{m.group('is_image')}[{m.group('link')}]({m.group('value')})"
 
     markdown = re.sub(link_regex, replace, markdown)
     return markdown
@@ -67,10 +66,6 @@ class RemarkReader(MarkdownReader):
             # Remove initial metadata at the top of the file
             delimeter = "\n\n"
             content = md_content[md_content.find(delimeter) + len(delimeter):]
-
-        # content = "![]({static}/images/git-status.png)"
-        # content = "<img src='{static}/images/git-status.png'></a>"
-        # content = '<textarea id="source">![]({static}/images/git-status.png)</textarea>'
 
         content = replace_internal_links(content)
         return content, metadata
