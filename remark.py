@@ -37,17 +37,31 @@ def get_markdown_link_regex():
     return regex
 
 
+def match_is_within_code_block(m: re.Match) -> bool:
+    """Return True if a given regex match is within a markdown code block
+
+    return False otherwise
+    """
+    substring_before_match = m.string[:m.start()]
+    num_backticks = substring_before_match.count("`")
+    within_code_block = (num_backticks % 2 == 1)
+
+    return within_code_block
+
+
 def replace_internal_links(markdown):
     """Return markdown, but internal links are replaced"""
     link_regex = get_markdown_link_regex()
 
     def replace(m):
-        # Remove "what" {static}
-        new_link = f"{m.group('is_image')}[{m.group('link')}]({m.group('value')})"
-        return new_link
+        """Replace the internal link if not within a code block"""
+        if not match_is_within_code_block(m):
+            # Remove "what" {static}
+            return f"{m.group('is_image')}[{m.group('link')}]({m.group('value')})"
+        return m.string[m.start():m.end()]
 
-    markdown = re.sub(link_regex, replace, markdown)
-    return markdown
+    markdown_replaced = re.sub(link_regex, replace, markdown)
+    return markdown_replaced
 
 
 class RemarkReader(MarkdownReader):
